@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="configuration_app_id" translatable="false">myapp</string>
+    <string name="configuration_firebase_url" translatable="false">https://chat-v2-dev.firebaseio.com</string>
+    <string name="configuration_firebase_storage_bucket" translatable="false">gs://chat-v2-dev.appspot.com</string>
+</resources>
