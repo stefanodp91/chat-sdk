@@ -54,24 +54,24 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }));
 
-        // logout
-        RxManager.getInstance().getCompositeDisposable().add(ChatManager.getInstance().getAuthManager()
-                .logout()
-                .subscribeOn(RxManager.getInstance().getSchedulerProvider().io())
-                .observeOn(RxManager.getInstance().getSchedulerProvider().ui())
-                .subscribe(userId -> {
-                    if (userId != null && !userId.isEmpty()) {
-                        Toast.makeText(mContext, "user with uid: " + userId + " logged out with success", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "user with uid: " + userId + " logged out with success");
-                        // dispose the manager and clean resources
-                        ChatManager.getInstance().dispose();
-
-                        RxManager.getInstance().getCompositeDisposable();
-                    }
-                }, throwable -> {
-                    if (throwable != null) {
-                        Log.e(TAG, throwable);
-                    }
-                }));
+//        // logout
+//        RxManager.getInstance().getCompositeDisposable().add(ChatManager.getInstance().getAuthManager()
+//                .logout()
+//                .subscribeOn(RxManager.getInstance().getSchedulerProvider().io())
+//                .observeOn(RxManager.getInstance().getSchedulerProvider().ui())
+//                .subscribe(userId -> {
+//                    if (userId != null && !userId.isEmpty()) {
+//                        Toast.makeText(mContext, "user with uid: " + userId + " logged out with success", Toast.LENGTH_SHORT).show();
+//                        Log.d(TAG, "user with uid: " + userId + " logged out with success");
+//                        // dispose the manager and clean resources
+//                        ChatManager.getInstance().dispose();
+//
+//                        RxManager.getInstance().getCompositeDisposable();
+//                    }
+//                }, throwable -> {
+//                    if (throwable != null) {
+//                        Log.e(TAG, throwable);
+//                    }
+//                }));
     }
 }

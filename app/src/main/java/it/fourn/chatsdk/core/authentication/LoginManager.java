@@ -46,21 +46,23 @@ class LoginManager extends Manager {
     private Single<FirebaseUser> signInWithEmailAndPassword(String email, String password) {
         return Single.create(emitter -> {
             try {
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "signInWithEmailAndPassword:success");
-                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                        // listen for login changes
-                        ChatManager.getInstance().getAuthManager().subscribeOnAuthStateListener(mAuth);
-                        if (firebaseUser != null) {
-                            emitter.onSuccess(firebaseUser);
+                if (mAuth != null) {
+                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && mAuth != null) {
+                            Log.d(TAG, "signInWithEmailAndPassword:success");
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            // listen for login changes
+                            ChatManager.getInstance().getAuthManager().subscribeOnAuthStateListener(mAuth);
+                            if (firebaseUser != null) {
+                                emitter.onSuccess(firebaseUser);
+                            }
+                        } else {
+                            Log.e(TAG, "signInWithEmailAndPassword:failure", task.getException());
+                            RxManager.getInstance().getRxBus().send(new RxBus.RxBusEvent<>(Signals.LOGIN_WITH_USERNAME_PASSWORD_ERROR, task.getException()));
+                            emitter.onError(task.getException());
                         }
-                    } else {
-                        Log.e(TAG, "signInWithEmailAndPassword:failure", task.getException());
-                        RxManager.getInstance().getRxBus().send(new RxBus.RxBusEvent<>(Signals.LOGIN_WITH_USERNAME_PASSWORD_ERROR, task.getException()));
-                        emitter.onError(task.getException());
-                    }
-                });
+                    });
+                }
             } catch (Exception e) {
                 Log.e(TAG, "signInWithEmailAndPassword:failure");
                 RxManager.getInstance().getRxBus().send(new RxBus.RxBusEvent<>(Signals.LOGIN_WITH_USERNAME_PASSWORD_ERROR, e.getCause()));
