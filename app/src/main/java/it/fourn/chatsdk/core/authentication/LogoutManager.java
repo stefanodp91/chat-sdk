@@ -13,12 +13,13 @@ import java.io.IOException;
 import io.reactivex.Single;
 import it.fourn.chatsdk.R;
 import it.fourn.chatsdk.core.ChatManager;
+import it.fourn.chatsdk.core.Manager;
 import it.fourn.chatsdk.core.Signals;
 import it.fourn.chatsdk.core.rx.RxBus;
 import it.fourn.chatsdk.core.rx.RxManager;
 import it.fourn.chatsdk.core.utilities.Log;
 
-class LogoutManager {
+class LogoutManager extends Manager {
 
     private static final String TAG = LogoutManager.class.getName();
 
@@ -34,7 +35,7 @@ class LogoutManager {
 
     // retrieve the device token and perform logout
     Single<String> logout() {
-        return AuthManager.getInstance().getDeviceTokenManager().getDeviceToken().flatMap(this::performLogout);
+        return ChatManager.getInstance().getAuthManager().getDeviceTokenManager().getDeviceToken().flatMap(this::performLogout);
     }
 
     // logout and update device token
@@ -55,7 +56,7 @@ class LogoutManager {
                         Log.d(TAG, "performLogout:success");
                         RxManager.getInstance().getRxBus().send(new RxBus.RxBusEvent<>(Signals.LOGOUT_SUCCESS, token));
                         // listen for login changes
-                        AuthManager.getInstance().unsubscribeOnAuthStateListener(mAuth);
+                        ChatManager.getInstance().getAuthManager().unsubscribeOnAuthStateListener(mAuth);
                         emitter.onSuccess(token);
                     } else {
                         Log.e(TAG, "performLogout:failure");
@@ -71,5 +72,11 @@ class LogoutManager {
                     emitter.onError(e);
             }
         });
+    }
+
+    @Override
+    public void dispose() {
+        mContext = null;
+        mAuth = null;
     }
 }

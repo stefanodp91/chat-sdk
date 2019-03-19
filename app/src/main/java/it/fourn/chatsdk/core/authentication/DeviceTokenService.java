@@ -2,6 +2,7 @@ package it.fourn.chatsdk.core.authentication;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 
+import it.fourn.chatsdk.core.ChatManager;
 import it.fourn.chatsdk.core.utilities.Log;
 
 public class DeviceTokenService extends FirebaseMessagingService {
@@ -24,6 +25,6 @@ public class DeviceTokenService extends FirebaseMessagingService {
     }
 
     private void sendRegistrationToServer(String token) {
-        AuthManager.getInstance().getDeviceTokenManager().saveFirebaseInstance(token);
+        ChatManager.getInstance().getAuthManager().getDeviceTokenManager().saveFirebaseInstance(token);
     }
 }

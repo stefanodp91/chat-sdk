@@ -7,15 +7,14 @@ import com.google.firebase.auth.FirebaseUser;
 
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
+import it.fourn.chatsdk.core.Manager;
 import it.fourn.chatsdk.core.Signals;
 import it.fourn.chatsdk.core.models.User;
 import it.fourn.chatsdk.core.rx.RxManager;
 import it.fourn.chatsdk.core.utilities.Log;
 
-public class AuthManager {
+public class AuthManager extends Manager {
     private static final String TAG = AuthManager.class.getName();
-
-    private static final AuthManager ourInstance = new AuthManager();
 
     private Context mContext;
     private FirebaseAuth mAuth;
@@ -25,20 +24,9 @@ public class AuthManager {
     private DeviceTokenManager mDeviceTokenManager;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    public static AuthManager getInstance() {
-        return ourInstance;
-    }
-
-    private AuthManager() {
+    public AuthManager(Context context) {
         mAuth = FirebaseAuth.getInstance();
-    }
 
-    /**
-     * Initialize the authentication manager
-     *
-     * @param context
-     */
-    public void init(Context context) {
         mContext = context;
 
         // save the device token for the new user
@@ -68,8 +56,41 @@ public class AuthManager {
                                                     Log.e(TAG, throwable);
                                                 }
                                             });
-
                         }));
+    }
+
+    /**
+     * Dispose the auth manager and clean resources.
+     */
+    @Override
+    public void dispose() {
+        if (mSignupManager != null) {
+            mSignupManager.dispose();
+        }
+        mSignupManager = null;
+
+        if (mLoginManager != null) {
+            mLoginManager.dispose();
+        }
+        mLoginManager = null;
+
+        if (mLogoutManager != null) {
+            mLogoutManager.dispose();
+        }
+        mLogoutManager = null;
+
+        if (mDeviceTokenManager != null) {
+            mDeviceTokenManager.dispose();
+        }
+        mDeviceTokenManager = null;
+
+        if (mAuth != null && mAuthListener != null) {
+            unsubscribeOnAuthStateListener(mAuth);
+        }
+        mAuthListener = null;
+        mAuth = null;
+
+        mContext = null;
     }
 
     /**

@@ -14,6 +14,7 @@ import java.util.Map;
 import io.reactivex.Single;
 import it.fourn.chatsdk.R;
 import it.fourn.chatsdk.core.ChatManager;
+import it.fourn.chatsdk.core.Manager;
 import it.fourn.chatsdk.core.Signals;
 import it.fourn.chatsdk.core.models.User;
 import it.fourn.chatsdk.core.models.UserDTO;
@@ -21,7 +22,7 @@ import it.fourn.chatsdk.core.rx.RxBus;
 import it.fourn.chatsdk.core.rx.RxManager;
 import it.fourn.chatsdk.core.utilities.Log;
 
-class SignupManager {
+class SignupManager extends Manager {
 
     private static final String TAG = SignupManager.class.getName();
 
@@ -109,5 +110,11 @@ class SignupManager {
                     emitter.onError(e);
             }
         });
+    }
+
+    @Override
+    public void dispose() {
+        mContext = null;
+        mAuth = null;
     }
 }

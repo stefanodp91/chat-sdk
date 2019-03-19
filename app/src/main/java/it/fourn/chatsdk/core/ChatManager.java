@@ -5,12 +5,14 @@ import android.content.Context;
 import com.google.firebase.database.FirebaseDatabase;
 
 import it.fourn.chatsdk.core.authentication.AuthManager;
+import it.fourn.chatsdk.core.rx.RxManager;
 
 public class ChatManager {
     private static ChatManager ourInstance = new ChatManager();
 
     private Context mContext;
     private Configuration mConfiguration;
+    private AuthManager mAuthManager;
 
     public static ChatManager getInstance() {
         return ourInstance;
@@ -37,7 +39,9 @@ public class ChatManager {
         chatManager.mContext = context;
         chatManager.mConfiguration = configuration;
 
-        AuthManager.getInstance().init(chatManager.mContext); // setup auth manager
+        if (chatManager.mAuthManager == null) {
+            chatManager.mAuthManager = new AuthManager(chatManager.mContext);
+        }
     }
 
     /**
@@ -57,6 +61,15 @@ public class ChatManager {
         //enable persistence must be made before any other usage of FirebaseDatabase instance.
         FirebaseDatabase.getInstance().setPersistenceEnabled(persistentOnDisk);
         init(context, configuration);
+    }
+
+    /**
+     * Return the authentication manager object
+     *
+     * @return
+     */
+    public AuthManager getAuthManager() {
+        return mAuthManager != null ? mAuthManager : new AuthManager(mContext);
     }
 
     /**
@@ -143,6 +156,24 @@ public class ChatManager {
             public Configuration build() {
                 return new Configuration(this);
             }
+        }
+    }
+
+    /**
+     * Dispose all managers, disposables and clean resources.
+     */
+    public void dispose() {
+        if (mAuthManager != null) {
+            mAuthManager.dispose();
+        }
+
+        disposeAllDisposables();
+    }
+
+    // dispose all pending disposables
+    private void disposeAllDisposables() {
+        if (!RxManager.getInstance().getCompositeDisposable().isDisposed()) {
+            RxManager.getInstance().getCompositeDisposable().dispose();
         }
     }
 }

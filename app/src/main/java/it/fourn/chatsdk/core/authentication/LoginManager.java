@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import io.reactivex.Single;
 import it.fourn.chatsdk.R;
 import it.fourn.chatsdk.core.ChatManager;
+import it.fourn.chatsdk.core.Manager;
 import it.fourn.chatsdk.core.Signals;
 import it.fourn.chatsdk.core.exceptions.FieldNotFoundException;
 import it.fourn.chatsdk.core.models.User;
@@ -24,7 +25,7 @@ import it.fourn.chatsdk.core.rx.RxBus;
 import it.fourn.chatsdk.core.rx.RxManager;
 import it.fourn.chatsdk.core.utilities.Log;
 
-class LoginManager {
+class LoginManager extends Manager {
 
     private static final String TAG = LoginManager.class.getName();
 
@@ -50,7 +51,7 @@ class LoginManager {
                         Log.d(TAG, "signInWithEmailAndPassword:success");
                         FirebaseUser firebaseUser = mAuth.getCurrentUser();
                         // listen for login changes
-                        AuthManager.getInstance().subscribeOnAuthStateListener(mAuth);
+                        ChatManager.getInstance().getAuthManager().subscribeOnAuthStateListener(mAuth);
                         if (firebaseUser != null) {
                             emitter.onSuccess(firebaseUser);
                         }
@@ -134,5 +135,11 @@ class LoginManager {
         contact.setUsername(firstname + lastname);
 
         return contact;
+    }
+
+    @Override
+    public void dispose() {
+        mContext = null;
+        mAuth = null;
     }
 }

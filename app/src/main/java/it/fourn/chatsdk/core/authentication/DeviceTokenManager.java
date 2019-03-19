@@ -15,13 +15,16 @@ import java.util.Map;
 import io.reactivex.Single;
 import it.fourn.chatsdk.R;
 import it.fourn.chatsdk.core.ChatManager;
+import it.fourn.chatsdk.core.Manager;
 import it.fourn.chatsdk.core.Signals;
 import it.fourn.chatsdk.core.rx.RxBus;
 import it.fourn.chatsdk.core.rx.RxManager;
 import it.fourn.chatsdk.core.utilities.Log;
 import it.fourn.chatsdk.core.utilities.ThisDevice;
 
-public class DeviceTokenManager {
+class DeviceTokenManager extends Manager {
+
+    private static final String TAG = DeviceTokenManager.class.getName();
 
     private Context mContext;
     private FirebaseAuth mAuth;
@@ -30,8 +33,6 @@ public class DeviceTokenManager {
         mContext = context;
         mAuth = auth;
     }
-
-    private static final String TAG = DeviceTokenManager.class.getName();
 
     Single<String> getDeviceTokenAndUpdateNodeReference() {
         return getDeviceToken().flatMap(this::saveFirebaseInstance);
@@ -104,5 +105,11 @@ public class DeviceTokenManager {
                     emitter.onError(e);
             }
         });
+    }
+
+    @Override
+    public void dispose() {
+        mContext = null;
+        mAuth = null;
     }
 }
