@@ -29,13 +29,9 @@ class LoginManager extends Manager {
 
     private static final String TAG = LoginManager.class.getName();
 
-    private Context mContext;
-    private FirebaseAuth mAuth;
-
 
     LoginManager(Context context, FirebaseAuth auth) {
-        mContext = context;
-        mAuth = auth;
+        super(context, auth);
     }
 
     Single<User> login(String email, String password) {
@@ -46,13 +42,13 @@ class LoginManager extends Manager {
     private Single<FirebaseUser> signInWithEmailAndPassword(String email, String password) {
         return Single.create(emitter -> {
             try {
-                if (mAuth != null) {
-                    mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && mAuth != null) {
+                if (getAuth() != null) {
+                    getAuth().signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && getAuth() != null) {
                             Log.d(TAG, "signInWithEmailAndPassword:success");
-                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            FirebaseUser firebaseUser = getAuth().getCurrentUser();
                             // listen for login changes
-                            ChatManager.getInstance().getAuthManager().subscribeOnAuthStateListener(mAuth);
+                            ChatManager.getInstance().getAuthManager().subscribeOnAuthStateListener(getAuth());
                             if (firebaseUser != null) {
                                 emitter.onSuccess(firebaseUser);
                             }
@@ -77,7 +73,7 @@ class LoginManager extends Manager {
         return Single.create(emitter -> {
             try {
                 DatabaseReference node = FirebaseDatabase.getInstance().getReference()
-                        .child(mContext.getString(R.string.firebase_node_contact, ChatManager.getInstance().getAppId(), firebaseUser.getUid()));
+                        .child(getContext().getString(R.string.firebase_node_contact, ChatManager.getInstance().getAppId(), firebaseUser.getUid()));
                 node.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -137,11 +133,5 @@ class LoginManager extends Manager {
         contact.setUsername(firstname + lastname);
 
         return contact;
-    }
-
-    @Override
-    public void dispose() {
-        mContext = null;
-        mAuth = null;
     }
 }

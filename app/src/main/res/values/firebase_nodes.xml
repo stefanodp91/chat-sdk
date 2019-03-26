@@ -12,7 +12,10 @@
     <!-- conversations node-->
     <string name="firebase_node_conversations" translatable="false">/apps/%1$s/users/%2$s/conversations</string>
 
-    <!-- unread conversations node-->
+    <!-- unread conversations read node-->
     <string name="firebase_node_unread_conversations" translatable="false">@string/firebase_node_conversations</string>
+
+    <!--sub node of conversations node. it target the "is_new" parameter to know if a conversations is read or not -->
+    <string name="firebase_node_new_conversation" translatable="false">/%1$s/is_new</string>
 
 </resources>

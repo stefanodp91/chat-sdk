@@ -110,6 +110,10 @@ public class ChatManager {
         return mContext;
     }
 
+    public boolean isSynced() {
+        return mConfiguration.keepSynced;
+    }
+
     /**
      * Set up a set of instructions necessary for chat operation
      */
@@ -117,17 +121,20 @@ public class ChatManager {
         private String appId;
         private String firebaseUrl;
         private String storageBucket;
+        private boolean keepSynced;
 
         Configuration(Builder builder) {
             appId = builder.mAppId;
             firebaseUrl = builder.mFirebaseUrl;
             storageBucket = builder.mStorageBucket;
+            keepSynced = builder.mKeepSynced;
         }
 
         public static final class Builder {
             private String mAppId;
             private String mFirebaseUrl;
             private String mStorageBucket;
+            private boolean mKeepSynced;
 
             /**
              * Set the appId
@@ -156,6 +163,18 @@ public class ChatManager {
              */
             public Builder storageBucket(String storageBucket) {
                 mStorageBucket = storageBucket;
+                return this;
+            }
+
+            /**
+             * By calling keepSynced(true) on a location,the data for that location will automatically be downloaded and kept in sync,
+             * even when no listeners are attached for that location.
+             * Additionally, while a location is kept synced, it will not be evicted from the persistent disk cache.
+             *
+             * @param keepSynced true to keep synced, false otherwise
+             */
+            public Builder keepSynced(boolean keepSynced) {
+                mKeepSynced = keepSynced;
                 return this;
             }
 

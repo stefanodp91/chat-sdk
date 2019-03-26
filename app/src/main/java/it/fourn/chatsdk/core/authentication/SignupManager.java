@@ -26,12 +26,8 @@ class SignupManager extends Manager {
 
     private static final String TAG = SignupManager.class.getName();
 
-    private Context mContext;
-    private FirebaseAuth mAuth;
-
     SignupManager(Context context, FirebaseAuth auth) {
-        mContext = context;
-        mAuth = auth;
+        super(context, auth);
     }
 
     Single<User> signup(String email, String password, String firstName, String lastName) {
@@ -43,10 +39,10 @@ class SignupManager extends Manager {
     private Single<String> createUserWithEmailAndPassword(String email, String password) {
         return Single.create(emitter -> {
             try {
-                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                getAuth().createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "createUserWithEmail:success");
-                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                        FirebaseUser firebaseUser = getAuth().getCurrentUser();
                         if (firebaseUser != null) {
                             emitter.onSuccess(firebaseUser.getUid());
                         }
@@ -72,15 +68,15 @@ class SignupManager extends Manager {
 
                 // firebase uploadable map
                 final Map<String, Object> map = new HashMap<>();
-                map.put(mContext.getString(R.string.signup_key_user_email), email);
-                map.put(mContext.getString(R.string.signup_key_user_first_name), firstName);
-                map.put(mContext.getString(R.string.signup_key_user_profile_picture), "");
-                map.put(mContext.getString(R.string.signup_key_user_last_name), lastName);
-                map.put(mContext.getString(R.string.signup_key_user_timestamp), new Date().getTime());
-                map.put(mContext.getString(R.string.signup_key_user_id), id);
+                map.put(getContext().getString(R.string.signup_key_user_email), email);
+                map.put(getContext().getString(R.string.signup_key_user_first_name), firstName);
+                map.put(getContext().getString(R.string.signup_key_user_profile_picture), "");
+                map.put(getContext().getString(R.string.signup_key_user_last_name), lastName);
+                map.put(getContext().getString(R.string.signup_key_user_timestamp), new Date().getTime());
+                map.put(getContext().getString(R.string.signup_key_user_id), id);
 
                 DatabaseReference node = FirebaseDatabase.getInstance().getReference()
-                        .child(mContext.getString(R.string.firebase_node_contacts, ChatManager.getInstance().getAppId()));
+                        .child(getContext().getString(R.string.firebase_node_contacts, ChatManager.getInstance().getAppId()));
 
                 // save the user on contacts node
                 node.child(id).setValue(map, (databaseError, databaseReference) -> {
@@ -110,11 +106,5 @@ class SignupManager extends Manager {
                     emitter.onError(e);
             }
         });
-    }
-
-    @Override
-    public void dispose() {
-        mContext = null;
-        mAuth = null;
     }
 }

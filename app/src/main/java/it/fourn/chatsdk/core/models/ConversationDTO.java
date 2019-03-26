@@ -201,4 +201,23 @@ public class ConversationDTO implements Conversation {
 
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "ConversationDTO{" +
+                "conversationId='" + conversationId + '\'' +
+                ", conversWith='" + conversWith + '\'' +
+                ", conversWithFullname='" + conversWithFullname + '\'' +
+                ", isNew=" + isNew +
+                ", lastMessageText='" + lastMessageText + '\'' +
+                ", recipient='" + recipient + '\'' +
+                ", recipientFullname='" + recipientFullname + '\'' +
+                ", sender='" + sender + '\'' +
+                ", senderFullname='" + senderFullname + '\'' +
+                ", status=" + status +
+                ", timestamp=" + timestamp +
+                ", extras=" + extras +
+                ", channelType='" + channelType + '\'' +
+                '}';
+    }
 }

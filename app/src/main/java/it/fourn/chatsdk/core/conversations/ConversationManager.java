@@ -6,37 +6,45 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import io.reactivex.Flowable;
 import it.fourn.chatsdk.core.Manager;
+import it.fourn.chatsdk.core.models.Conversation;
 
 public class ConversationManager extends Manager {
 
-    private Context mContext;
-    private FirebaseAuth mAuth;
-    private String mUserId;
     private UnreadConversationsManager mUnreadConversationsManager;
+    private ConversationsListManager mConversationsListManager;
 
     public ConversationManager(Context context, FirebaseAuth auth) {
-        mContext = context;
-        mAuth = auth;
-        if (mAuth != null && mAuth.getCurrentUser() != null) {
-            mUserId = mAuth.getCurrentUser().getUid();
-        }
+        super(context, auth);
     }
 
     public Flowable<Integer> countUnreadConversations() {
         if (mUnreadConversationsManager == null) {
-            mUnreadConversationsManager = new UnreadConversationsManager(mContext, mUserId);
+            mUnreadConversationsManager = new UnreadConversationsManager(getContext(), getAuth());
         }
         return mUnreadConversationsManager.countUnreadConversations();
     }
 
+    public Flowable<Conversation> subscribeOnConversationsUpdates() {
+        if (mConversationsListManager == null) {
+            mConversationsListManager = new ConversationsListManager(getContext(), getAuth());
+        }
+        return mConversationsListManager.subscribeOnConversationsUpdates();
+    }
+
     @Override
     public void dispose() {
-        mContext = null;
-        mAuth = null;
-
+        // unread conversations
         if (mUnreadConversationsManager != null) {
             mUnreadConversationsManager.dispose();
         }
         mUnreadConversationsManager = null;
+
+        // conversations list
+        if (mConversationsListManager != null) {
+            mConversationsListManager.dispose();
+        }
+        mConversationsListManager = null;
+
+        super.dispose();
     }
 }

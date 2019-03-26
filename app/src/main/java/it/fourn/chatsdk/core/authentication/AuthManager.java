@@ -16,7 +16,6 @@ import it.fourn.chatsdk.core.utilities.Log;
 public class AuthManager extends Manager {
     private static final String TAG = AuthManager.class.getName();
 
-    private Context mContext;
     private FirebaseAuth mAuth;
     private SignupManager mSignupManager;
     private LoginManager mLoginManager;
@@ -25,9 +24,8 @@ public class AuthManager extends Manager {
     private FirebaseAuth.AuthStateListener mAuthListener;
 
     public AuthManager(Context context) {
+        super(context);
         mAuth = FirebaseAuth.getInstance();
-
-        mContext = context;
 
         // save the device token for the new user
         RxManager.getInstance().getCompositeDisposable().add(RxManager.getInstance().getRxBus()
@@ -89,8 +87,6 @@ public class AuthManager extends Manager {
         }
         mAuthListener = null;
         mAuth = null;
-
-        mContext = null;
     }
 
     /**
@@ -103,7 +99,7 @@ public class AuthManager extends Manager {
      */
     public Single<User> signup(String email, String password, String firstName, String lastName) {
         if (mSignupManager == null) {
-            mSignupManager = new SignupManager(mContext, mAuth);
+            mSignupManager = new SignupManager(getContext(), mAuth);
         }
 
         return mSignupManager.signup(email, password, firstName, lastName);
@@ -118,7 +114,7 @@ public class AuthManager extends Manager {
      */
     public Single<User> login(String email, String password) {
         if (mLoginManager == null) {
-            mLoginManager = new LoginManager(mContext, mAuth);
+            mLoginManager = new LoginManager(getContext(), mAuth);
         }
         return mLoginManager.login(email, password);
     }
@@ -130,7 +126,7 @@ public class AuthManager extends Manager {
      */
     public Single<String> logout() {
         if (mLogoutManager == null) {
-            mLogoutManager = new LogoutManager(mContext, mAuth);
+            mLogoutManager = new LogoutManager(getContext(), mAuth);
         }
         return mLogoutManager.logout();
     }
@@ -139,7 +135,7 @@ public class AuthManager extends Manager {
     // if it not exists create a new one
     DeviceTokenManager getDeviceTokenManager() {
         if (mDeviceTokenManager == null) {
-            mDeviceTokenManager = new DeviceTokenManager(mContext, mAuth);
+            mDeviceTokenManager = new DeviceTokenManager(getContext(), mAuth);
         }
         return mDeviceTokenManager;
     }

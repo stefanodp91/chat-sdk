@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         // login
         RxManager.getInstance().getCompositeDisposable().add(ChatManager.getInstance().getAuthManager()
-                .login("jake.waerton@gmail.com", "123456")
+                .login("stefano.depascalis@frontiere21.it", "Frontiere21")
                 .subscribeOn(RxManager.getInstance().getSchedulerProvider().io())
                 .observeOn(RxManager.getInstance().getSchedulerProvider().ui())
                 .subscribe(user -> {
@@ -88,5 +88,18 @@ public class MainActivity extends AppCompatActivity {
                                 Log.e(TAG, throwable);
                             }
                         }));
+
+        // subscribe on conversations changes
+        RxManager.getInstance().getCompositeDisposable().add(ChatManager.getInstance()
+                .getConversationManager().subscribeOnConversationsUpdates()
+                .subscribeOn(RxManager.getInstance().getSchedulerProvider().io())
+                .observeOn(RxManager.getInstance().getSchedulerProvider().ui())
+                .subscribe(conversation -> {
+                    Log.d(TAG, "subscribeOnConversationsUpdates.conversation: " + conversation.toString());
+                }, throwable -> {
+                    if (throwable != null) {
+                        Log.e(TAG, throwable);
+                    }
+                }));
     }
 }

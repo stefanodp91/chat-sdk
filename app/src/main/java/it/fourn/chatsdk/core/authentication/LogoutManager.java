@@ -23,14 +23,11 @@ class LogoutManager extends Manager {
 
     private static final String TAG = LogoutManager.class.getName();
 
-    private Context mContext;
-    private FirebaseAuth mAuth;
     private FirebaseUser mFirebaseUser;
 
     LogoutManager(Context context, FirebaseAuth auth) {
-        mContext = context;
-        mAuth = auth;
-        mFirebaseUser = mAuth.getCurrentUser();
+        super(context, auth);
+        mFirebaseUser = getAuth().getCurrentUser();
     }
 
     // retrieve the device token and perform logout
@@ -49,14 +46,14 @@ class LogoutManager extends Manager {
             try {
                 // remove the instanceId for the logged user
                 DatabaseReference node = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.getInstance().getFirebaseUrl())
-                        .child(mContext.getString(R.string.firebase_node_user_instance_id, ChatManager.getInstance().getAppId(),
+                        .child(getContext().getString(R.string.firebase_node_user_instance_id, ChatManager.getInstance().getAppId(),
                                 mFirebaseUser.getUid(), token));
                 node.removeValue((databaseError, databaseReference) -> {
                     if (databaseError == null) {
                         Log.d(TAG, "performLogout:success");
                         RxManager.getInstance().getRxBus().send(new RxBus.RxBusEvent<>(Signals.LOGOUT_SUCCESS, token));
                         // listen for login changes
-                        ChatManager.getInstance().getAuthManager().unsubscribeOnAuthStateListener(mAuth);
+                        ChatManager.getInstance().getAuthManager().unsubscribeOnAuthStateListener(getAuth());
                         emitter.onSuccess(token);
                     } else {
                         Log.e(TAG, "performLogout:failure");
@@ -72,11 +69,5 @@ class LogoutManager extends Manager {
                     emitter.onError(e);
             }
         });
-    }
-
-    @Override
-    public void dispose() {
-        mContext = null;
-        mAuth = null;
     }
 }

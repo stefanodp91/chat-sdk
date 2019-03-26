@@ -26,12 +26,8 @@ class DeviceTokenManager extends Manager {
 
     private static final String TAG = DeviceTokenManager.class.getName();
 
-    private Context mContext;
-    private FirebaseAuth mAuth;
-
     DeviceTokenManager(Context context, FirebaseAuth auth) {
-        mContext = context;
-        mAuth = auth;
+        super(context, auth);
     }
 
     Single<String> getDeviceTokenAndUpdateNodeReference() {
@@ -68,13 +64,13 @@ class DeviceTokenManager extends Manager {
 
         return Single.create(emitter -> {
 
-            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+            FirebaseUser firebaseUser = getAuth().getCurrentUser();
             String appId = ChatManager.getInstance().getAppId();
 
             try {
                 if (firebaseUser != null && appId != null && !appId.isEmpty()) {
                     DatabaseReference node = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.getInstance().getFirebaseUrl())
-                            .child(mContext.getString(R.string.firebase_node_user_instance_id, appId, firebaseUser.getUid(), token));
+                            .child(getContext().getString(R.string.firebase_node_user_instance_id, appId, firebaseUser.getUid(), token));
 
                     // return device info
                     Map<String, Object> device = new HashMap<>();
@@ -82,7 +78,7 @@ class DeviceTokenManager extends Manager {
                     device.put("model", ThisDevice.thisDevice().getModel());
                     device.put("platform", "Android");
                     device.put("platform_version", ThisDevice.thisDevice().getVersion());
-                    device.put("language", mContext.getResources().getConfiguration().locale.toString());
+                    device.put("language", getContext().getResources().getConfiguration().locale.toString());
                     device.put("last_app_launched", new Date().getTime());
 
                     // upload data
@@ -105,11 +101,5 @@ class DeviceTokenManager extends Manager {
                     emitter.onError(e);
             }
         });
-    }
-
-    @Override
-    public void dispose() {
-        mContext = null;
-        mAuth = null;
     }
 }
