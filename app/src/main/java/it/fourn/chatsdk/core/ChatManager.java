@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.firebase.database.FirebaseDatabase;
 
 import it.fourn.chatsdk.core.authentication.AuthManager;
+import it.fourn.chatsdk.core.conversations.ConversationManager;
 import it.fourn.chatsdk.core.rx.RxManager;
 
 public class ChatManager {
@@ -13,6 +14,7 @@ public class ChatManager {
     private Context mContext;
     private Configuration mConfiguration;
     private AuthManager mAuthManager;
+    private ConversationManager mConversationManager;
 
     public static ChatManager getInstance() {
         return ourInstance;
@@ -70,6 +72,15 @@ public class ChatManager {
      */
     public AuthManager getAuthManager() {
         return mAuthManager != null ? mAuthManager : new AuthManager(mContext);
+    }
+
+    /**
+     * Return the conversations manager object
+     *
+     * @return
+     */
+    public ConversationManager getConversationManager() {
+        return mConversationManager != null ? mConversationManager : new ConversationManager(mContext, getAuthManager().getAuth());
     }
 
     /**

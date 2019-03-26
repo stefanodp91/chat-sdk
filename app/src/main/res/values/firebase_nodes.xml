@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- contacts node -->
-    <string name="firebase_node_contacts">/apps/%1$s/contacts</string>
+    <string name="firebase_node_contacts" translatable="false">/apps/%1$s/contacts</string>
 
     <!-- single contact node -->
-    <string name="firebase_node_contact">/apps/%1$s/contacts/%2$s</string>
+    <string name="firebase_node_contact" translatable="false">/apps/%1$s/contacts/%2$s</string>
 
     <!-- user instance id node -->
-    <string name="firebase_node_user_instance_id">/apps/%1$s/users/%2$s/instances/%3$s</string>
+    <string name="firebase_node_user_instance_id" translatable="false">/apps/%1$s/users/%2$s/instances/%3$s</string>
+
+    <!-- conversations node-->
+    <string name="firebase_node_conversations" translatable="false">/apps/%1$s/users/%2$s/conversations</string>
+
+    <!-- unread conversations node-->
+    <string name="firebase_node_unread_conversations" translatable="false">@string/firebase_node_conversations</string>
 
 </resources>

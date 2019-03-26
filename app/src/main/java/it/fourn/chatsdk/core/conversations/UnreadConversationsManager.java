@@ -21,9 +21,9 @@ import it.fourn.chatsdk.core.exceptions.FirebaseDatabaseException;
 import it.fourn.chatsdk.core.models.Conversation;
 import it.fourn.chatsdk.core.utilities.Log;
 
-class UnreadConversationManager extends Manager {
+class UnreadConversationsManager extends Manager {
 
-    private static final String TAG = UnreadConversationManager.class.getName();
+    private static final String TAG = UnreadConversationsManager.class.getName();
 
     private Context mContext;
     private String mUserId;
@@ -31,15 +31,15 @@ class UnreadConversationManager extends Manager {
     private ValueEventListener mUnreadConversationsListener;
     private DatabaseReference node;
 
-    UnreadConversationManager(Context context, String userId) {
+    UnreadConversationsManager(Context context, String userId) {
         mContext = context;
         mUserId = userId;
         mUnreadConversations = new ArrayList<>();
 
         node = FirebaseDatabase.getInstance().getReferenceFromUrl(ChatManager.getInstance().getFirebaseUrl())
-                .child(mContext.getString(R.string.firebase_node_conversations, ChatManager.getInstance().getAppId(), userId));
+                .child(mContext.getString(R.string.firebase_node_unread_conversations, ChatManager.getInstance().getAppId(), userId));
         node.keepSynced(true);
-        Log.d(TAG, "UnreadConversationManager.databaseReference: " + node.toString());
+        Log.d(TAG, "UnreadConversationsManager.databaseReference: " + node.toString());
     }
 
     Flowable<Integer> countUnreadConversations() {

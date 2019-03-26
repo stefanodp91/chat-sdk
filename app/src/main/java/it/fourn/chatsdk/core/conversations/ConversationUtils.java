@@ -8,8 +8,8 @@ import it.fourn.chatsdk.core.exceptions.FieldNotFoundException;
 import it.fourn.chatsdk.core.models.Conversation;
 import it.fourn.chatsdk.core.models.ConversationDTO;
 
-class Utils {
-    private Conversation decodeConversationFromSnapshot(DataSnapshot dataSnapshot) {
+class ConversationUtils {
+    static Conversation decodeConversationFromSnapshot(String userId, DataSnapshot dataSnapshot) {
         Conversation conversation = new ConversationDTO();
 
         // conversationId
@@ -59,7 +59,7 @@ class Utils {
         conversation.setChannelType(channelType);
 
         // convers with
-        if (conversation.getRecipient().equals(mUserId)) {
+        if (conversation.getRecipient().equals(userId)) {
             conversation.setConversWith(conversation.getSender());
             conversation.setConversWithFullname(conversation.getSenderFullname());
         } else {

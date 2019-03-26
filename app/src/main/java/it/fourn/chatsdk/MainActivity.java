@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import it.fourn.chatsdk.core.ChatManager;
+import it.fourn.chatsdk.core.Signals;
 import it.fourn.chatsdk.core.rx.RxManager;
 import it.fourn.chatsdk.core.utilities.Log;
 
@@ -73,5 +74,19 @@ public class MainActivity extends AppCompatActivity {
 //                        Log.e(TAG, throwable);
 //                    }
 //                }));
+
+
+        // subscribe on counting the number of unread conversations
+        RxManager.getInstance().getCompositeDisposable().add(ChatManager.getInstance()
+                .getConversationManager().countUnreadConversations()
+                .subscribeOn(RxManager.getInstance().getSchedulerProvider().io())
+                .observeOn(RxManager.getInstance().getSchedulerProvider().ui())
+                .subscribe(unreadConversationsCounter -> {
+                            Log.d(TAG, "unreadConversationsCounter: " + unreadConversationsCounter);
+                        }, throwable -> {
+                            if (throwable != null) {
+                                Log.e(TAG, throwable);
+                            }
+                        }));
     }
 }

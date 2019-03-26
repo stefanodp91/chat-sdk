@@ -169,4 +169,8 @@ public class AuthManager extends Manager {
             auth.removeAuthStateListener(mAuthListener);
         }
     }
+
+    public FirebaseAuth getAuth() {
+        return mAuth;
+    }
 }

@@ -40,4 +40,14 @@ public class Signals {
      * Signal sent when it tried to save the device ID but the operation failed
      */
     public static final String GET_DEVICE_ID_ERROR = "GET_DEVICE_ID_ERROR";
+
+    /**
+     * Signal sent when it tried count the unread conversations with success
+     */
+    public static final String UNREAD_CONVERSATIONS_SUCCESS = "UNREAD_CONVERSATIONS_SUCCESS";
+
+    /**
+     * Signal sent when it tried count the unread conversations but the operation failed
+     */
+    public static final String UNREAD_CONVERSATIONS_ERROR = "UNREAD_CONVERSATIONS_ERROR";
 }
